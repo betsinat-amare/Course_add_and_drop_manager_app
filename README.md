@@ -16,12 +16,14 @@ Authentication and Authorization
 Authentication: The process through which users verify their identity when they log into the application. Secure logins ensure that only authorized users can access their respective functionalities.
 Authorization: Determines which resources a user can access and what actions they can perform within the app. This mechanism ensures that users can only access features relevant to their roles.
 Business Features
+
 Feature 1: Course List Management (Admin)
 CRUD Operations:
 Create: Admins can add new courses with details such as course name, course code, instructor, credits, and schedule.
 Read: Admins can view a list of all existing courses along with their details.
 Update: Admins can update course information, such as course name, instructor, or schedule as necessary.
 Delete: Admins can remove courses from the list that are no longer offered.
+
 Feature 2: Course Catalog (Student)
 Description: Students can view a comprehensive list of courses offered by the institution as defined by the admin.
 CRUD Operations:
@@ -35,6 +37,7 @@ Description: Students can alter their enrollment status (e.g., switch from "inte
 Delete (Drop Course):
 Description: Students can drop courses they are currently enrolled in.
 Functionality: The app updates the enrollment record to reflect that the student is no longer enrolled.
+
 Feature 3: Enrollment Management (Student)
 Description: Students can effectively manage their enrollments in courses.
 CRUD Operations:
