@@ -1,4 +1,4 @@
-# Course_add_and_drop_app
+# Course_add_and_drop_manager_app
 # Group members
 | Name                | ID            |
 |---------------------|---------------|
