@@ -13,7 +13,9 @@ Project Overview
 The Course Add and Drop App is a mobile application designed to streamline the process of course management for educational institutions. It facilitates two primary user roles: Admin and Student. Admin users can manage course offerings, while students can view available courses, enroll in them, and manage their enrollments efficiently. The application aims to enhance the educational experience by providing a clear and structured method for handling course registrations.
 
 Authentication and Authorization
+
 Authentication: The process through which users verify their identity when they log into the application. Secure logins ensure that only authorized users can access their respective functionalities.
+
 Authorization: Determines which resources a user can access and what actions they can perform within the app. This mechanism ensures that users can only access features relevant to their roles.
 Business Features
 
