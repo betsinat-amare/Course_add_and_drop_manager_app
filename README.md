@@ -17,6 +17,7 @@ Authentication and Authorization
 Authentication: The process through which users verify their identity when they log into the application. Secure logins ensure that only authorized users can access their respective functionalities.
 
 Authorization: Determines which resources a user can access and what actions they can perform within the app. This mechanism ensures that users can only access features relevant to their roles.
+
 Business Features
 
 Feature 1: Course List Management (Admin)
