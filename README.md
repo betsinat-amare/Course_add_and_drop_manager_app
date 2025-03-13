@@ -65,9 +65,15 @@ CRUD Operations:
 Create (Enrollment Record):
 
 Description: When a student enrolls in a course, an enrollment record is created linking the student and the course.
+
 Read (View Enrolled Courses):
+
 Description: Students can view a list of courses they are currently enrolled in along with relevant details.
+
 Update (Change Enrollment Status):
+
 Description: Students can update their enrollment status (e.g., mark a course as completed).
+
 Delete (Drop Course):
+
 Description: Students can remove courses they are enrolled in, updating their information accordingly.
