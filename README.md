@@ -22,29 +22,48 @@ Business Features
 
 Feature 1: Course List Management (Admin)
 CRUD Operations:
+
 Create: Admins can add new courses with details such as course name, course code, instructor, credits, and schedule.
+
 Read: Admins can view a list of all existing courses along with their details.
+
 Update: Admins can update course information, such as course name, instructor, or schedule as necessary.
+
 Delete: Admins can remove courses from the list that are no longer offered.
 
 Feature 2: Course Catalog (Student)
 Description: Students can view a comprehensive list of courses offered by the institution as defined by the admin.
+
 CRUD Operations:
+
 Create (Enroll in Course):
+
 Description: Students can select courses from the catalog to enroll in. The app verifies that the course is available.
+
 Functionality: When a student chooses a course to enroll in, a new enrollment record is created.
+
 Read (View Courses):
+
 Description: Students can see all available courses with details like course name, code, instructor, and schedule.
+
 Update: (This can be interpreted as changing enrollment status)
+
 Description: Students can alter their enrollment status (e.g., switch from "interested" to "enrolled").
+
 Delete (Drop Course):
+
 Description: Students can drop courses they are currently enrolled in.
+
 Functionality: The app updates the enrollment record to reflect that the student is no longer enrolled.
 
 Feature 3: Enrollment Management (Student)
+
 Description: Students can effectively manage their enrollments in courses.
+
 CRUD Operations:
+
 Create (Enrollment Record):
+
 Description: When a student enrolls in a course, an enrollment record is created linking the student and the course.
 Read (View Enrolled Courses):
 Description: Students can view a list of courses they are currently enrolled in along with relevant details.
