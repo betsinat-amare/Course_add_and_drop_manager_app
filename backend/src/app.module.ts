@@ -3,13 +3,39 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MulterModule } from '@nestjs/platform-express';
+import {JwtModule}  from '@nestjs/jwt'
+import {ConfigModule, ConfigService} from '@nestjs/config'
+import  config  from './config/config';
 
 @Module({
-  imports: [  MongooseModule.forRootAsync({
-    useFactory: () => ({
-      uri: 'mongodb://127.0.0.1:27017/AuthExampleDB',
+  imports: [ 
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      load: [config],
     }),
-  }),   AuthModule],
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+     useFactory: async (config)=>({
+      secret:config.get('jwt.secret'),
+   
+     }),
+     global:true,
+     inject:[ConfigService]
+    }),
+    MongooseModule.forRootAsync({
+      imports:[ConfigModule],
+      useFactory: async (config) => ({
+        uri:  config.get('database.connectionString'),
+      }),
+      inject:[ConfigService]
+    }),
+    MulterModule.register({
+      dest: './uploads',
+    }),
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

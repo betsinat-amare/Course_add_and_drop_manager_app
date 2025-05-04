@@ -17,11 +17,11 @@ export class SignupDto {
   @IsNotEmpty()
   @MinLength(6)
   @IsString()
-  @Matches((/^(?=,*[0-9])/),{message:"password must contain at least one number"})
+  @Matches(/^(?=.*\d)/, { message: 'password must contain at least one number' })
   password: string;
-
-
+  
   @IsOptional()
   @IsString()
   profileImage?: string;
+  
 }

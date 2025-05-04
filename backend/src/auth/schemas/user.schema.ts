@@ -1,4 +1,3 @@
-// auth/schemas/user.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
@@ -16,10 +15,8 @@ export class User extends Document {
   @Prop({ required: true })
   password: string;
 
-  profileImage: {
-    type: String, // Store URL
-    required: false,
-  }
+  @Prop({ required: false }) // Optional image field
+  profileImage?: string; // Store image filename or path
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
