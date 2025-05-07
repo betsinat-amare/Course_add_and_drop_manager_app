@@ -34,7 +34,7 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-// Custom middleware to make profile_photo optional
+
 const optionalUpload = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     upload.single('profile_photo')(req, res, (err) => {
         if (err instanceof multer.MulterError) {
@@ -42,7 +42,7 @@ const optionalUpload = (req: AuthenticatedRequest, res: Response, next: NextFunc
         } else if (err) {
             return res.status(400).json({ error: err.message });
         }
-        // Continue even if no file is provided
+      
         next();
     });
 };
@@ -149,5 +149,87 @@ router.post('/login', [
         res.status(200).json({ token });
     });
 });
+router.get('/profile', async (req: AuthenticatedRequest, res: Response) => {
+    const db = new sqlite3.Database('./college.db');
+    const userId = req.user?.id;
+    if (!userId){
+        db.close();
+        return res.status(401).json({ error:'Unauthorized' });
+}
 
+    db.get('SELECT * FROM users WHERE id = ?', [userId], (err, user: any) => {
+        if (err) {
+            db.close();
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        if (!user) {
+            db.close();
+            return res.status(404).json({ error: 'User not found' });
+        }
+        db.close();
+        res.status(200).json(user);
+    });
+});
+router.put('/profile', optionalUpload, async (req: AuthenticatedRequest, res: Response) => {
+    const db = new sqlite3.Database('./college.db');
+    const userId = req.user?.id;
+    if (!userId){
+        db.close();
+        return res.status(401).json({ error:'Unauthorized' });
+}
+
+    const { full_name, username, email } = req.body;
+    const profile_photo = req.file ? req.file.path : null;
+
+    db.run(
+        'UPDATE users SET full_name = ?, username = ?, email = ?, profile_photo = ? WHERE id = ?',
+        [full_name, username, email, profile_photo, userId],
+        (err) => {
+            if (err) {
+                db.close();
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+            db.close();
+            res.status(200).json({ message: 'Profile updated successfully' });
+        }
+    );
+});
+router.delete('/profile', async (req: AuthenticatedRequest, res: Response) => {
+    const db = new sqlite3.Database('./college.db');
+    const userId = req.user?.id;
+    if (!userId){
+        db.close();
+        return res.status(401).json({ error:'Unauthorized' });
+}
+
+    db.run('DELETE FROM users WHERE id = ?', [userId], (err) => {
+        if (err) {
+            db.close();
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        db.close();
+        res.status(200).json({ message: 'Profile deleted successfully' });
+    });
+});
+router.get('/logout', async (req: AuthenticatedRequest, res: Response) => {
+    const db =new sqlite3.Database('./college.db');
+    const userId =req.user?.id;
+    if (!userId){
+        db.close();
+        return res.status(401).json({ error:'Unauthorized' });
+    }
+    db.get('SELECT * FROM users WHERE id = ?', [userId], (err, user: any) => {
+        if (err){
+            db.close();
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        if (!user){
+            db.close();
+            return res.status(404).json({error:'User not found' });
+
+        }
+        db.close();
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
+});
 export default router;
