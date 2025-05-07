@@ -24,16 +24,35 @@ const registrarToken = jwt.sign(
 before((done: Done) => {
     const db = new sqlite3.Database('./college.db');
     db.serialize(() => {
-        db.run('INSERT OR IGNORE INTO users (id, username, password, role, email) VALUES (?, ?, ?, ?, ?)', 
-            [1, 'teststudent', bcrypt.hashSync('password123', 10), 'Student', 'teststudent@example.com']);
-        db.run('INSERT OR IGNORE INTO users (id, username, password, role, email) VALUES (?, ?, ?, ?, ?)', 
-            [2, 'testregistrar', bcrypt.hashSync('password123', 10), 'Registrar', 'testregistrar@example.com']);
+        db.run('DELETE FROM users');
+        db.run('DELETE FROM ids');
+        db.run('DELETE FROM courses');
+        db.run('DELETE FROM adds');
+        db.run('DELETE FROM drops');
+        db.run('DELETE FROM sqlite_sequence WHERE name IN ("users", "ids", "courses", "adds", "drops")');
+        db.run('INSERT OR IGNORE INTO ids (id, role, assigned) VALUES (?, ?, ?)', [1, 'Student', 1]);
+        db.run('INSERT OR IGNORE INTO ids (id, role, assigned) VALUES (?, ?, ?)', [2, 'Registrar', 1]);
+        db.run('INSERT OR IGNORE INTO users (id, full_name, username, password, role, email, profile_photo) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+            [1, 'Test Student', 'teststudent', bcrypt.hashSync('password123', 10), 'Student', 'teststudent@example.com', null]);
+        db.run('INSERT OR IGNORE INTO users (id, full_name, username, password, role, email, profile_photo) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+            [2, 'Test Registrar', 'testregistrar', bcrypt.hashSync('password123', 10), 'Registrar', 'testregistrar@example.com', null]);
         db.run('INSERT OR IGNORE INTO courses (id, title, code, description, credit_hours) VALUES (?, ?, ?, ?, ?)', 
             [1, 'Course 1', 'C101', 'Desc 1', 10]);
-        db.run('INSERT OR IGNORE INTO adds (id, student_id, course_id, approval_status) VALUES (?, ?, ?, ?)', 
-            [1, 1, 1, 'approved']);
-        db.run('INSERT OR IGNORE INTO drops (id, student_id, course_id, add_id, approval_status) VALUES (?, ?, ?, ?, ?)', 
-            [1, 1, 1, 1, 'pending']);
+        db.run('INSERT OR IGNORE INTO courses (id, title, code, description, credit_hours) VALUES (?, ?, ?, ?, ?)', 
+            [2, 'Course 2', 'C102', 'Desc 2', 20]);
+    });
+    db.close();
+    done();
+});
+
+beforeEach((done: Done) => {
+    const db = new sqlite3.Database('./college.db');
+    db.serialize(() => {
+        db.run('DELETE FROM adds');
+        db.run('DELETE FROM drops');
+        db.run('DELETE FROM sqlite_sequence WHERE name IN ("adds", "drops")');
+        db.run('INSERT INTO adds (student_id, course_id, approval_status) VALUES (?, ?, ?)', 
+            [1, 1, 'approved']);
     });
     db.close();
     done();
@@ -44,11 +63,14 @@ describe('Drops API', () => {
         request(app as Express)
             .post('/api/drops')
             .set('Authorization', `Bearer ${studentToken}`)
-            .send({ add_id: 1, course_id: 1 })
+            .send({ add_id: 1 })
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body).to.have.property('id');
+                expect(res.body).to.have.property('add_id', 1);
+                expect(res.body).to.have.property('student_id', 1);
+                expect(res.body).to.have.property('course_id', 1);
                 expect(res.body).to.have.property('approval_status', 'pending');
                 done();
             });
@@ -56,39 +78,65 @@ describe('Drops API', () => {
 
     it('should allow registrar to approve a drop', (done: Done) => {
         request(app as Express)
-            .put('/api/drops/1')
-            .set('Authorization', `Bearer ${registrarToken}`)
-            .send({ approval_status: 'approved' })
-            .expect(200)
+            .post('/api/drops')
+            .set('Authorization', `Bearer ${studentToken}`)
+            .send({ add_id: 1 })
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body).to.have.property('message', 'Drop updated');
-                done();
+                const dropId = res.body.id;
+                request(app as Express)
+                    .put(`/api/drops/${dropId}`)
+                    .set('Authorization', `Bearer ${registrarToken}`)
+                    .send({ approval_status: 'approved' })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err);
+                        expect(res.body).to.have.property('message', 'Drop updated');
+                        done();
+                    });
             });
     });
 
     it('should get drops for a student', (done: Done) => {
         request(app as Express)
-            .get('/api/drops')
+            .post('/api/drops')
             .set('Authorization', `Bearer ${studentToken}`)
-            .expect(200)
+            .send({ add_id: 1 })
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body).to.be.an('array');
-                expect(res.body[0]).to.have.property('approval_status');
-                done();
+                request(app as Express)
+                    .get('/api/drops')
+                    .set('Authorization', `Bearer ${studentToken}`)
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err);
+                        expect(res.body).to.be.an('array');
+                        expect(res.body[0]).to.have.property('add_id', 1);
+                        done();
+                    });
             });
     });
 
     it('should get all drops for a registrar', (done: Done) => {
         request(app as Express)
-            .get('/api/drops')
-            .set('Authorization', `Bearer ${registrarToken}`)
-            .expect(200)
+            .post('/api/drops')
+            .set('Authorization', `Bearer ${studentToken}`)
+            .send({ add_id: 1 })
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body).to.be.an('array');
-                done();
+                request(app as Express)
+                    .get('/api/drops')
+                    .set('Authorization', `Bearer ${registrarToken}`)
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err);
+                        expect(res.body).to.be.an('array');
+                        expect(res.body[0]).to.have.property('add_id', 1);
+                        done();
+                    });
             });
     });
 });

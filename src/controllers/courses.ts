@@ -1,4 +1,3 @@
-// src/controllers/courses.ts
 import { Request, Response } from 'express';
 import db from '../db';
 import { Course } from '../models';

@@ -15,11 +15,21 @@ const studentToken = jwt.sign(
     { expiresIn: '1h' }
 );
 
+const registrarToken = jwt.sign(
+    { id: 2, role: 'Registrar' },
+    JWT_SECRET,
+    { expiresIn: '1h' }
+);
+
 before((done: Done) => {
     const db = new sqlite3.Database('./college.db');
     db.serialize(() => {
-        db.run('INSERT OR IGNORE INTO users (id, username, password, role, email) VALUES (?, ?, ?, ?, ?)', 
-            [1, 'teststudent', bcrypt.hashSync('password123', 10), 'Student', 'teststudent@example.com']);
+        db.run('INSERT OR IGNORE INTO ids (id, role, assigned) VALUES (?, ?, ?)', [1, 'Student', 1]);
+        db.run('INSERT OR IGNORE INTO ids (id, role, assigned) VALUES (?, ?, ?)', [2, 'Registrar', 1]);
+        db.run('INSERT OR IGNORE INTO users (id, full_name, username, password, role, email, profile_photo) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+            [1, 'Test Student', 'teststudent', bcrypt.hashSync('password123', 10), 'Student', 'teststudent@example.com', null]);
+        db.run('INSERT OR IGNORE INTO users (id, full_name, username, password, role, email, profile_photo) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+            [2, 'Test Registrar', 'testregistrar', bcrypt.hashSync('password123', 10), 'Registrar', 'testregistrar@example.com', null]);
         db.run('INSERT OR IGNORE INTO courses (id, title, code, description, credit_hours) VALUES (?, ?, ?, ?, ?)', 
             [1, 'Course 1', 'C101', 'Desc 1', 10]);
         db.run('INSERT OR IGNORE INTO courses (id, title, code, description, credit_hours) VALUES (?, ?, ?, ?, ?)', 
@@ -32,6 +42,45 @@ before((done: Done) => {
 });
 
 describe('Courses API', () => {
+    it('should allow registrar to create a course', (done: Done) => {
+        request(app as Express)
+            .post('/api/courses')
+            .set('Authorization', `Bearer ${registrarToken}`)
+            .send({
+                title: 'New Course',
+                code: 'C104',
+                description: 'New Description',
+                credit_hours: 5
+            })
+            .expect(201)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body).to.have.property('id');
+                expect(res.body.title).to.equal('New Course');
+                expect(res.body.code).to.equal('C104');
+                expect(res.body.credit_hours).to.equal(5);
+                done();
+            });
+    });
+
+    it('should prevent student from creating a course', (done: Done) => {
+        request(app as Express)
+            .post('/api/courses')
+            .set('Authorization', `Bearer ${studentToken}`)
+            .send({
+                title: 'Invalid Course',
+                code: 'C105',
+                description: 'Invalid Description',
+                credit_hours: 5
+            })
+            .expect(403)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body).to.have.property('error', 'Forbidden');
+                done();
+            });
+    });
+
     it('should get all courses', (done: Done) => {
         request(app as Express)
             .get('/api/courses')
