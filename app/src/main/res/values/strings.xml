@@ -1,3 +1,47 @@
 <resources>
     <string name="app_name">Course_add_and_drop_manager_app</string>
+
+
+        <string name="Start">Create Account</string>
+        <string name="Id">Your ID</string>
+        <string name="SelectAcademic">Select Academic year and calander</string>
+        <string name="password">Enter your password</string>
+        <string name="upload">Upload your picture</string>
+        <string name="uploadImg">Upload image</string>
+        <string name="edit">Edit Your account</string>
+        <string name="username">Enter your username</string>
+        <string name="email">Enter your email</string>
+        <string name="save">Save</string>
+        <string name="profileImg">profile image</string>
+        <string name="IdImg">Id image</string>
+        <string name="title">Enter the title</string>
+        <string name="code">Enter the course code</string>
+        <string name="description">Enter the description </string>
+        <string name="credit_hours">Enter course credit-hours </string>
+        <string name="passwordImg">password image</string>
+        <string name="photoImg">photo image</string>
+        <string name="placeName">Enter your full name</string>
+        <string name="Hello">Create your account to get started</string>
+        <string name="hide_password">Hide password</string>
+        <string name="show_password">Show password</string>
+        <string name="terms_and_condition">Agree with terms and conditions.</string>
+        <string name="terms_and_condition_header">Terms of Use</string>
+        <string name="signUp">Sign Up</string>
+        <string name="welcomef">Welcome Fenet</string>
+        <string name="dashboard_button"> +  Add New</string>
+        <string name="logIn">Log In</string>
+        <string name="Already_have_account">Already have an account?
+     Log In</string>
+        <string name="access">Access Account</string>
+        <string name="effort">Effortlessly manage your courses and stay
+    ahead in your academic journey!</string>
+        <string name="getStarted">Get Started</string>
+        <string name="welcome">Welcome to the Course  Add and Drop Manager App</string>
+        <string name="access_your_course">Access your courses with ease</string>
+        <string name="forget_password">Forget your password?</string>
+        <string name="need_to_create">Need to create an account?</string>
+
+        <string name="Already_have_accountL">Already have an account?</string>
+
+
 </resources>
