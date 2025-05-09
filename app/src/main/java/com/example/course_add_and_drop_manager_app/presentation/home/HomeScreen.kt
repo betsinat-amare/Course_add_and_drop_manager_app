@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.course_add_and_drop_manager_app.Course_add_and_drop_managerAppRoute
 import com.example.course_add_and_drop_manager_app.R
 import com.example.course_add_and_drop_manager_app.Screen
+import com.example.course_add_and_drop_manager_app.presentation.components.Button
 import com.example.course_add_and_drop_manager_app.presentation.components.ButtonComponent
 import com.example.course_add_and_drop_manager_app.presentation.components.HeadingHomeTextComponent
 import com.example.course_add_and_drop_manager_app.presentation.components.HeadingTextComponent
@@ -59,7 +60,7 @@ fun HomeScreen(){
             HeadingHomeTextComponent(value = stringResource(id= R.string.welcome))
             NormalTextComponent(value= stringResource(id=R.string.effort))
             Spacer(modifier=Modifier.height(180.dp))
-            ButtonComponent(value = stringResource(id=R.string.getStarted), onClick = {
+            Button(value = stringResource(id=R.string.getStarted), onClick = {
                 Course_add_and_drop_managerAppRoute.navigateTo(Screen.LoginScreen)
             })
         }

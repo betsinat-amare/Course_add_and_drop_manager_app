@@ -114,7 +114,7 @@ fun SwitchableTableView() {
                 )
             }
         }
-        ButtonComponent(value= stringResource(id= R.string.dashboard_button), onClick = {
+        Button(value= stringResource(id= R.string.dashboard_button), onClick = {
             Course_add_and_drop_managerAppRoute.navigateTo(Screen.SelectAcademicYear)
 
         })

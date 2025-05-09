@@ -1,5 +1,6 @@
 package com.example.course_add_and_drop_manager_app.presentation.singIn
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,9 +12,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,14 +31,24 @@ import com.example.course_add_and_drop_manager_app.presentation.components.Click
 import com.example.course_add_and_drop_manager_app.presentation.components.HeadingTextComponent
 import com.example.course_add_and_drop_manager_app.presentation.components.NormalTextComponent
 import com.example.course_add_and_drop_manager_app.presentation.components.PasswordLoginTextFieldComponent
-import com.example.course_add_and_drop_manager_app.presentation.components.PasswordTextFieldComponent
-import com.example.course_add_and_drop_manager_app.presentation.components.SystemBackButtonHandler
 import com.example.course_add_and_drop_manager_app.presentation.components.TextFieldComponent
 import com.example.course_add_and_drop_manager_app.presentation.components.UnderLinedTextComponent
+import com.example.course_add_and_drop_manager_app.presentation.components.SystemBackButtonHandler
 import com.example.course_add_and_drop_manager_app.ui.theme.colorGrayBackground
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    navigateToDashboard: () -> Unit = {
+        Course_add_and_drop_managerAppRoute.navigateTo(Screen.UserDashboardScreen)
+    }
+) {
+    val username by viewModel.username
+    val password by viewModel.password
+    val loginError by viewModel.loginError
+    val isButtonEnabled by viewModel.isButtonEnabled
+    val context = LocalContext.current
+
     val onBack: () -> Unit = {
         Course_add_and_drop_managerAppRoute.navigateTo(Screen.HomeScreen)
     }
@@ -41,14 +56,15 @@ fun LoginScreen() {
     SystemBackButtonHandler {
         onBack()
     }
+
     Surface(
         color = colorGrayBackground,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(Color(0xFFE0E7FF))
             .padding(top = 20.dp),
     ) {
         Column {
-            // Back Icon
             IconButton(onClick = { onBack() }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -56,48 +72,66 @@ fun LoginScreen() {
                 )
             }
 
-
             Column(modifier = Modifier.fillMaxSize().padding(top = 140.dp)) {
                 HeadingTextComponent(value = stringResource(id = R.string.access))
                 Spacer(modifier = Modifier.height(10.dp))
                 NormalTextComponent(value = stringResource(id = R.string.access_your_course))
                 Spacer(modifier = Modifier.height(25.dp))
-                TextFieldComponent(
-                    labelValue = stringResource(id = R.string.Id),
-                    painterResource = (painterResource(id = R.drawable.id_image)),
-                    contentDescription = stringResource(id = R.string.IdImg)
 
+                TextFieldComponent(
+                    labelValue = stringResource(id = R.string.placeName),
+                    painterResource = painterResource(id = R.drawable.profile),
+                    contentDescription = stringResource(id = R.string.profileImg),
+                    onValueChange = { viewModel.onUsernameChanged(it) }
                 )
+
                 PasswordLoginTextFieldComponent(
                     labelValue = stringResource(id = R.string.password),
-                    painterResource = (painterResource(id = R.drawable.password)),
-                    contentDescription = stringResource(id = R.string.passwordImg)
-
+                    painterResource = painterResource(id = R.drawable.password),
+                    contentDescription = stringResource(id = R.string.passwordImg),
+                    onValueChange = { viewModel.onPasswordChanged(it) }
                 )
-                Spacer(modifier = Modifier.height(15.dp))
-                UnderLinedTextComponent( onTextSelected = {
-                    Course_add_and_drop_managerAppRoute.navigateTo(Screen.ForgetPasswordScreen)
 
+                Spacer(modifier = Modifier.height(15.dp))
+
+                UnderLinedTextComponent(onTextSelected = {
+                    Course_add_and_drop_managerAppRoute.navigateTo(Screen.ForgetPasswordScreen)
                 })
+
                 Spacer(modifier = Modifier.height(40.dp))
+
                 ButtonComponent(
                     value = stringResource(id = R.string.logIn),
                     onClick = {
-                        Course_add_and_drop_managerAppRoute.navigateTo(Screen.UserDashboardScreen)
-                    })
+                        viewModel.login(
+                            onSuccess = {
+                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                                navigateToDashboard()
+                            },
+                            onError = {
+                                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+                            }
+                        )
+                    },
+                    enabled = isButtonEnabled // Button is enabled or disabled based on input
+                )
+
                 Spacer(modifier = Modifier.height(15.dp))
+
                 NormalTextComponent(value = stringResource(id = R.string.need_to_create))
                 ClickableSignUpTextComponent(onTextSelected = {
                     Course_add_and_drop_managerAppRoute.navigateTo(Screen.SignUpScreen)
                 })
 
+                if (loginError.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(text = loginError, color = Color.Red, modifier = Modifier.padding(start = 16.dp))
+                }
             }
-
-
         }
     }
-
 }
+
 @Preview
 @Composable
 fun LoginScreenPreview(){

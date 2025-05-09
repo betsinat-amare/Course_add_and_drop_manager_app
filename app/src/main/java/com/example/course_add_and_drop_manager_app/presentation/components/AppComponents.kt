@@ -1,9 +1,15 @@
 package com.example.course_add_and_drop_manager_app.presentation.components
 
+import android.content.Context
+import android.net.Uri
+import android.provider.OpenableColumns
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -115,20 +122,41 @@ fun NormalTextComponent(value:String){
         )
     )
 
-}
-@Composable
-fun TextFieldPhotoComponent(labelValue: String,painterResource: Painter,contentDescription:String) {
+}@Composable
+fun TextFieldPhotoComponent(
+    labelValue: String,
+    painterResource: Painter,
+    contentDescription: String,
+    onValueChange: (String) -> Unit
+) {
+    val context = LocalContext.current
+    val localFocusManager = LocalFocusManager.current
     val textValue = remember { mutableStateOf("") }
-    val localFocusManager= LocalFocusManager.current
+
+    // Image picker launcher
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val displayName = getFileNameFromUri(context, it)
+            textValue.value = displayName
+            onValueChange(it.toString()) // You can also pass `uri` directly if needed
+        }
+    }
 
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 25.dp, vertical = 8.dp),
+            .padding(horizontal = 25.dp, vertical = 8.dp)
+            .clickable { imagePickerLauncher.launch("image/*") },
         value = textValue.value,
-        onValueChange = { textValue.value = it },
-        label = { Text(text = labelValue,
-            style= TextStyle(color=colorGray)) },
+        onValueChange = {},  // Disable manual typing
+        label = {
+            Text(
+                text = labelValue,
+                style = TextStyle(color = colorGray)
+            )
+        },
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = colorPrimary,
             unfocusedIndicatorColor = Color.White,
@@ -138,24 +166,31 @@ fun TextFieldPhotoComponent(labelValue: String,painterResource: Painter,contentD
             unfocusedContainerColor = Color.White
         ),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        singleLine = true,
-        keyboardActions= KeyboardActions{
+        keyboardActions = KeyboardActions {
             localFocusManager.clearFocus()
         },
+        readOnly = true,
+        singleLine = true,
         maxLines = 1,
         leadingIcon = {
             Icon(
-                painter = painterResource,   // Replace 'ic_profile' with your actual icon file name
+                painter = painterResource,
                 contentDescription = contentDescription,
-                modifier = Modifier.size(24.dp)  // Adjust size as needed
+                modifier = Modifier.size(24.dp)
             )
-        },
-
-
+        }
     )
 }
+
+
+
 @Composable
-fun TextFieldComponent(labelValue: String,painterResource: Painter,contentDescription:String) {
+fun TextFieldComponent(
+    labelValue: String,
+    painterResource: Painter,
+    contentDescription: String,
+    onValueChange: (String) -> Unit
+) {
     val textValue = remember { mutableStateOf("") }
 
     OutlinedTextField(
@@ -163,9 +198,16 @@ fun TextFieldComponent(labelValue: String,painterResource: Painter,contentDescri
             .fillMaxWidth()
             .padding(horizontal = 25.dp, vertical = 8.dp),
         value = textValue.value,
-        onValueChange = { textValue.value = it },
-        label = { Text(text = labelValue,
-            style= TextStyle(color=colorGray)) },
+        onValueChange = {
+            textValue.value = it
+            onValueChange(it)  // Send value to the parent
+        },
+        label = {
+            Text(
+                text = labelValue,
+                style = TextStyle(color = colorGray)
+            )
+        },
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = colorPrimary,
             unfocusedIndicatorColor = Color.White,
@@ -179,26 +221,32 @@ fun TextFieldComponent(labelValue: String,painterResource: Painter,contentDescri
         maxLines = 1,
         leadingIcon = {
             Icon(
-                painter = painterResource,   // Replace 'ic_profile' with your actual icon file name
+                painter = painterResource,
                 contentDescription = contentDescription,
-                modifier = Modifier.size(24.dp)  // Adjust size as needed
+                modifier = Modifier.size(24.dp)
             )
         },
-
-
-        )
+    )
 }
 @Composable
-fun PasswordTextFieldComponent(labelValue: String,painterResource: Painter,contentDescription:String) {
+fun PasswordTextFieldComponent(
+    labelValue: String,
+    painterResource: Painter,
+    contentDescription: String,
+    onValueChange: (String) -> Unit
+) {
     val textValue = remember { mutableStateOf("") }
-    val passwordVisible=remember{ mutableStateOf(false) }
+    val passwordVisible = remember { mutableStateOf(false) }
 
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 25.dp, vertical = 8.dp),
         value = textValue.value,
-        onValueChange = { textValue.value = it },
+        onValueChange = {
+            textValue.value = it
+            onValueChange(it)  // Send value to parent
+        },
         label = {
             Text(
                 text = labelValue,
@@ -213,50 +261,66 @@ fun PasswordTextFieldComponent(labelValue: String,painterResource: Painter,conte
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White
         ),
-        keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Next
+        ),
         singleLine = true,
         maxLines = 1,
         leadingIcon = {
             Icon(
-                painter = painterResource,   // Replace 'ic_profile' with your actual icon file name
+                painter = painterResource,
                 contentDescription = contentDescription,
-                modifier = Modifier.size(24.dp)  // Adjust size as needed
+                modifier = Modifier.size(24.dp)
             )
         },
         trailingIcon = {
-            val iconImage=if(passwordVisible.value){
+            val iconImage = if (passwordVisible.value) {
                 Icons.Filled.Visibility
-            }else{
+            } else {
                 Icons.Filled.VisibilityOff
             }
-            var description = if(passwordVisible.value){
-               stringResource(id=R.string.hide_password)
-
-            }else{
-                stringResource(id=R.string.show_password)
+            val description = if (passwordVisible.value) {
+                stringResource(id = R.string.hide_password)
+            } else {
+                stringResource(id = R.string.show_password)
             }
-            IconButton(onClick = {passwordVisible.value=!passwordVisible.value}) {
+
+            IconButton(onClick = {
+                passwordVisible.value = !passwordVisible.value
+            }) {
                 Icon(
                     imageVector = iconImage,
-                    contentDescription=description
+                    contentDescription = description
                 )
             }
-
         },
-        visualTransformation =if(passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (passwordVisible.value)
+            VisualTransformation.None
+        else
+            PasswordVisualTransformation()
     )
 }
 @Composable
-fun PasswordLoginTextFieldComponent(labelValue: String,painterResource: Painter,contentDescription:String) {
+fun PasswordLoginTextFieldComponent(
+    labelValue: String,
+    painterResource: Painter,
+    contentDescription: String,
+    onValueChange: (String) -> Unit // 👈 Add this parameter
+) {
     val textValue = remember { mutableStateOf("") }
-    val passwordVisible=remember{ mutableStateOf(false) }
-    val localFocusManager= LocalFocusManager.current
+    val passwordVisible = remember { mutableStateOf(false) }
+    val localFocusManager = LocalFocusManager.current
+
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 25.dp, vertical = 8.dp),
         value = textValue.value,
-        onValueChange = { textValue.value = it },
+        onValueChange = {
+            textValue.value = it
+            onValueChange(it) // 👈 Trigger the external callback
+        },
         label = {
             Text(
                 text = labelValue,
@@ -271,42 +335,46 @@ fun PasswordLoginTextFieldComponent(labelValue: String,painterResource: Painter,
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White
         ),
-        keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
         singleLine = true,
-        keyboardActions= KeyboardActions{
+        keyboardActions = KeyboardActions {
             localFocusManager.clearFocus()
         },
         maxLines = 1,
         leadingIcon = {
             Icon(
-                painter = painterResource,   // Replace 'ic_profile' with your actual icon file name
+                painter = painterResource,
                 contentDescription = contentDescription,
-                modifier = Modifier.size(24.dp)  // Adjust size as needed
+                modifier = Modifier.size(24.dp)
             )
         },
         trailingIcon = {
-            val iconImage=if(passwordVisible.value){
+            val iconImage = if (passwordVisible.value) {
                 Icons.Filled.Visibility
-            }else{
+            } else {
                 Icons.Filled.VisibilityOff
             }
-            var description = if(passwordVisible.value){
-                stringResource(id=R.string.hide_password)
-
-            }else{
-                stringResource(id=R.string.show_password)
+            val description = if (passwordVisible.value) {
+                stringResource(id = R.string.hide_password)
+            } else {
+                stringResource(id = R.string.show_password)
             }
-            IconButton(onClick = {passwordVisible.value=!passwordVisible.value}) {
+            IconButton(onClick = {
+                passwordVisible.value = !passwordVisible.value
+            }) {
                 Icon(
                     imageVector = iconImage,
-                    contentDescription=description
+                    contentDescription = description
                 )
             }
-
         },
-        visualTransformation =if(passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation()
     )
 }
+
 @Composable
 fun CheckboxComponent(value:String,onTextSelected:(String)->Unit){
     Row(modifier=Modifier
@@ -355,10 +423,8 @@ fun ClickableTextComponent(value:String,onTextSelected:(String)->Unit){
 
      })
 }
-
-
 @Composable
-fun ButtonComponent(
+fun ButtonSignupComponent(
     value: String,
     onClick: () -> Unit
 ) {
@@ -385,6 +451,68 @@ fun ButtonComponent(
         }
     }
 }
+@Composable
+fun Button(
+    value: String,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Button(
+            onClick = onClick,
+            modifier = Modifier
+                .width(260.dp) // Optional: fixed width for nicer centering
+                .height(50.dp),
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(containerColor = colorPrimary),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = value,
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            )
+        }
+    }
+}
+@Composable
+fun ButtonComponent(
+    value: String,
+    onClick: () -> Unit,
+    enabled: Boolean // Added the enabled parameter
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Button(
+            onClick = onClick,
+            modifier = Modifier
+                .width(260.dp) // Optional: fixed width for nicer centering
+                .height(50.dp),
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorPrimary,
+                disabledContainerColor = Color.Gray // Optional: color when button is disabled
+            ),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            enabled = enabled // Button's enabled state
+        ) {
+            Text(
+                text = value,
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            )
+        }
+    }
+}
+
 @Composable
 fun ClickableLoginTextComponent(onTextSelected: (String) -> Unit) {
     val initialText = "Already have an account? "
@@ -484,3 +612,18 @@ fun UnderLinedTextComponent(tryingToLogin: Boolean = true, onTextSelected: (Stri
         )
     }
 }
+fun getFileNameFromUri(context: Context, uri: Uri): String {
+    var result: String? = null
+    if (uri.scheme == "content") {
+        context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (nameIndex >= 0) {
+                    result = cursor.getString(nameIndex)
+                }
+            }
+        }
+    }
+    return result ?: uri.lastPathSegment ?: "Unknown"
+}
+

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.example.course_add_and_drop_manager_app.Course_add_and_drop_managerAppRoute
 import com.example.course_add_and_drop_manager_app.R
 import com.example.course_add_and_drop_manager_app.Screen
+import com.example.course_add_and_drop_manager_app.presentation.components.Button
 import com.example.course_add_and_drop_manager_app.presentation.components.ButtonComponent
 import com.example.course_add_and_drop_manager_app.presentation.components.CheckboxComponent
 import com.example.course_add_and_drop_manager_app.presentation.components.ClickableLoginTextComponent
@@ -103,27 +104,43 @@ fun EditProfile() {
             ) {
                 HeadingTextComponent(value = stringResource(id = R.string.edit))
                 Spacer(modifier = Modifier.height(35.dp))
+                var fullName by remember { mutableStateOf("") }
+                var email by remember { mutableStateOf("") }
+                var id by remember { mutableStateOf("") }
+                var password by remember { mutableStateOf("") }
+                var profilePhoto by remember { mutableStateOf("") }
 
                 TextFieldComponent(
                     labelValue = stringResource(id = R.string.placeName),
                     painterResource = painterResource(id = R.drawable.profile),
-                    contentDescription = stringResource(id = R.string.profileImg)
+                    contentDescription = stringResource(id = R.string.profileImg),
+                    onValueChange = { fullName = it }
+                )
+                TextFieldComponent(
+                    labelValue = stringResource(id = R.string.email),
+                    painterResource = painterResource(id = R.drawable.email),
+                    contentDescription = stringResource(id = R.string.IdImg),
+                    onValueChange = { email = it }
                 )
                 TextFieldComponent(
                     labelValue = stringResource(id = R.string.Id),
                     painterResource = painterResource(id = R.drawable.id_image),
-                    contentDescription = stringResource(id = R.string.IdImg)
+                    contentDescription = stringResource(id = R.string.IdImg),
+                    onValueChange = { id = it }
                 )
                 PasswordTextFieldComponent(
                     labelValue = stringResource(id = R.string.password),
                     painterResource = painterResource(id = R.drawable.password),
-                    contentDescription = stringResource(id = R.string.passwordImg)
+                    contentDescription = stringResource(id = R.string.passwordImg),
+                    onValueChange = { password = it }
                 )
                 TextFieldPhotoComponent(
                     labelValue = stringResource(id = R.string.upload),
                     painterResource = painterResource(id = R.drawable.upload),
-                    contentDescription = stringResource(id = R.string.uploadImg)
+                    contentDescription = stringResource(id = R.string.uploadImg),
+                    onValueChange = { profilePhoto = it } // Handle photo upload here
                 )
+
 
                 CheckboxComponent(
                     value = stringResource(id = R.string.terms_and_condition),
@@ -134,7 +151,7 @@ fun EditProfile() {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                ButtonComponent(
+                Button(
                     value = stringResource(id = R.string.save),
                     onClick = {}
                 )

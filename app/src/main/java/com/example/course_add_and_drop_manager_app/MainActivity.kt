@@ -16,6 +16,7 @@ import com.example.course_add_and_drop_manager_app.presentation.addCourse.AddCou
 
 import com.example.course_add_and_drop_manager_app.presentation.dashboard.SelectAcademicYear
 import com.example.course_add_and_drop_manager_app.presentation.dashboard.UserDashboardScreen
+import com.example.course_add_and_drop_manager_app.presentation.dashboard.EditProfile
 import com.example.course_add_and_drop_manager_app.presentation.dropcourse.DropCourse
 import com.example.course_add_and_drop_manager_app.presentation.home.HomeScreen
 import com.example.course_add_and_drop_manager_app.presentation.signUp.SignUpScreen
