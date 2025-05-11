@@ -41,7 +41,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
 
     packaging {
@@ -55,25 +56,26 @@ android {
 }
 
 dependencies {
+
+    implementation(platform("androidx.compose:compose-bom:2024.05.00"))
+
     // Core AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
 
-    // ✅ Compose BOM for version alignment
-    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
-
     // Compose UI
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3") // ✅ Only one material3 version
+    implementation("androidx.compose.material3:material3")
+    // If you need icons:
     implementation("androidx.compose.material:material-icons-extended")
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
-    // Firebase (if actually used)
+    // Firebase (if used)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.appdistribution.gradle)
@@ -82,10 +84,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.01"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
-    // Debugging
+    // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
@@ -94,9 +96,16 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation("com.google.dagger:hilt-android:2.48")
+    // kapt("com.google.dagger:hilt-compiler:2.48") // Enable if using Hilt
 
-    // Lifecycle and Coroutines
+    // Lifecycle + Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
+
+    // Auth
+    implementation("com.auth0.android:jwtdecode:2.0.1")
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
 }

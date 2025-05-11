@@ -1,58 +1,27 @@
 package com.example.course_add_and_drop_manager_app.presentation.singIn
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.course_add_and_drop_manager_app.data.model.LoginRequest
-import com.example.course_add_and_drop_manager_app.data.network.RetrofitInstance
+import com.auth0.android.jwt.JWT
+import com.example.course_add_and_drop_manager_app.data.local.DataStoreManager
+import com.example.course_add_and_drop_manager_app.data.repository.LoginRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(
+    private val dataStoreManager: DataStoreManager
+) : ViewModel() {
 
-    // States for username and password input fields
     var username = mutableStateOf("")
     var password = mutableStateOf("")
 
-    // State for login success or error messages
     var loginError = mutableStateOf("")
     var loginSuccess = mutableStateOf(false)
-
-    // State for controlling button enabled/disabled
     var isButtonEnabled = mutableStateOf(false)
 
-    // Check if the login button should be enabled
-    private fun updateButtonState() {
-        isButtonEnabled.value = username.value.isNotBlank() && password.value.isNotBlank()
-    }
-
-    // Function to handle login attempt
-    fun login(onSuccess: () -> Unit, onError: (String) -> Unit) {
-        viewModelScope.launch {
-            try {
-                // Perform login request with Retrofit
-                val response = RetrofitInstance.api.login(
-                    LoginRequest(username.value, password.value)
-                )
-
-                if (response.isSuccessful && response.body() != null) {
-                    val token = response.body()!!.token
-
-                    // Save token to secure storage or local storage if necessary
-
-                    loginSuccess.value = true
-                    onSuccess()
-                } else {
-                    loginError.value = "Invalid credentials"
-                    onError("Invalid username or password")
-                }
-            } catch (e: Exception) {
-                loginError.value = "Network error"
-                onError("Error: ${e.localizedMessage}")
-            }
-        }
-    }
-
-    // Listen for changes to username or password and update button state accordingly
     fun onUsernameChanged(newUsername: String) {
         username.value = newUsername
         updateButtonState()
@@ -62,4 +31,124 @@ class LoginViewModel : ViewModel() {
         password.value = newPassword
         updateButtonState()
     }
+
+    private fun updateButtonState() {
+        isButtonEnabled.value = username.value.isNotBlank() && password.value.isNotBlank()
+    }
+
+    fun login(
+        onAdminSuccess: () -> Unit,
+        onUserSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val token = withContext(Dispatchers.IO) {
+                    LoginRepository.login(username.value, password.value)
+                }
+
+                // ✅ Save token locally
+                dataStoreManager.saveToken(token)
+
+                val jwt = JWT(token)
+                val userId = jwt.getClaim("id").asInt()
+                val role = jwt.getClaim("role").asString()
+
+                Log.d("LoginViewModel", "Token: $token")
+                Log.d("LoginViewModel", "userId: $userId, role: $role")
+
+                if (userId == 2 || role?.lowercase() == "registrar") {
+                    loginSuccess.value = true
+                    onAdminSuccess()
+                } else {
+                    loginSuccess.value = true
+                    onUserSuccess()
+                }
+
+            } catch (e: Exception) {
+                loginSuccess.value = false
+                loginError.value = "Login failed: ${e.message ?: "Unknown error"}"
+                onError(loginError.value)
+            }
+        }
+    }
 }
+
+
+
+
+
+//package com.example.course_add_and_drop_manager_app.presentation.singIn
+//
+//import android.util.Log
+//import androidx.compose.runtime.mutableStateOf
+//import androidx.lifecycle.ViewModel
+//import androidx.lifecycle.viewModelScope
+//import com.auth0.android.jwt.JWT
+//import com.example.course_add_and_drop_manager_app.data.repository.LoginRepository
+//import kotlinx.coroutines.Dispatchers
+//import kotlinx.coroutines.launch
+//import kotlinx.coroutines.withContext
+//
+//class LoginViewModel : ViewModel() {
+//
+//    var username = mutableStateOf("")
+//    var password = mutableStateOf("")
+//
+//    var loginError = mutableStateOf("")
+//    var loginSuccess = mutableStateOf(false)
+//    var isButtonEnabled = mutableStateOf(false)
+//
+//    fun onUsernameChanged(newUsername: String) {
+//        username.value = newUsername
+//        updateButtonState()
+//    }
+//
+//    fun onPasswordChanged(newPassword: String) {
+//        password.value = newPassword
+//        updateButtonState()
+//    }
+//
+//    private fun updateButtonState() {
+//        isButtonEnabled.value = username.value.isNotBlank() && password.value.isNotBlank()
+//    }
+//
+//    fun login(
+//        onAdminSuccess: () -> Unit,
+//        onUserSuccess: () -> Unit,
+//        onError: (String) -> Unit
+//    ) {
+//        viewModelScope.launch {
+//            try {
+//
+//                val token = withContext(Dispatchers.IO) {
+//
+//                    LoginRepository.login(username.value, password.value)
+//                }
+//
+//                // Process the token asynchronously
+//                val jwt = JWT(token)
+//                val userId = jwt.getClaim("id").asInt()
+//                val role = jwt.getClaim("role").asString()
+//
+//                Log.d("LoginViewModel", "Token: $token")
+//                Log.d("LoginViewModel", "userId: $userId, role: $role")
+//
+//                // Route based on userId or role
+//                if (userId == 2 || role?.lowercase() == "registrar") {
+//                    loginSuccess.value = true
+//                    onAdminSuccess()
+//                } else {
+//                    loginSuccess.value = true
+//                    onUserSuccess()
+//                }
+//
+//            } catch (e: Exception) {
+//                loginSuccess.value = false
+//                loginError.value = "Login failed: ${e.message ?: "Unknown error"}"
+//                onError(loginError.value)
+//            }
+//        }
+//    }
+//
+//}

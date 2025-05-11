@@ -12,6 +12,10 @@
     <string name="save">Save</string>
     <string name="profileImg">profile image</string>
     <string name="IdImg">Id image</string>
+    <string name="title">Enter the title</string>
+    <string name="code">Enter the course code</string>
+    <string name="description">Enter the description </string>
+    <string name="credit_hours">Enter course credit-hours </string>
     <string name="passwordImg">password image</string>
     <string name="photoImg">photo image</string>
     <string name="placeName">Enter your full name</string>

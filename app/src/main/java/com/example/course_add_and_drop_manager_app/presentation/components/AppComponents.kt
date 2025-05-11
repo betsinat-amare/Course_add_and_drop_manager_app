@@ -229,6 +229,94 @@ fun TextFieldComponent(
     )
 }
 @Composable
+fun TextFieldAdminComponent(
+    labelValue: String,
+    painterResource: Painter,
+//    contentDescription: String,
+    onValueChange: (String) -> Unit
+) {
+    val textValue = remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 25.dp, vertical = 8.dp),
+        value = textValue.value,
+        onValueChange = {
+            textValue.value = it
+            onValueChange(it)  // Send value to the parent
+        },
+        label = {
+            Text(
+                text = labelValue,
+                style = TextStyle(color = colorGray)
+            )
+        },
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = colorPrimary,
+            unfocusedIndicatorColor = Color.White,
+            focusedLabelColor = colorPrimary,
+            cursorColor = colorPrimary,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White
+        ),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        singleLine = true,
+        maxLines = 1,
+//        leadingIcon = {
+//            Icon(
+//                painter = painterResource,
+//                contentDescription = contentDescription,
+//                modifier = Modifier.size(24.dp)
+//            )
+//        },
+    )
+}
+@Composable
+fun TextFieldAdminFinalComponent(
+    labelValue: String,
+    painterResource: Painter,
+//    contentDescription: String,
+    onValueChange: (String) -> Unit
+) {
+    val textValue = remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 25.dp, vertical = 8.dp),
+        value = textValue.value,
+        onValueChange = {
+            textValue.value = it
+            onValueChange(it)  // Send value to the parent
+        },
+        label = {
+            Text(
+                text = labelValue,
+                style = TextStyle(color = colorGray)
+            )
+        },
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = colorPrimary,
+            unfocusedIndicatorColor = Color.White,
+            focusedLabelColor = colorPrimary,
+            cursorColor = colorPrimary,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White
+        ),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        singleLine = true,
+        maxLines = 1,
+//        leadingIcon = {
+//            Icon(
+//                painter = painterResource,
+//                contentDescription = contentDescription,
+//                modifier = Modifier.size(24.dp)
+//            )
+//        },
+    )
+}
+@Composable
 fun PasswordTextFieldComponent(
     labelValue: String,
     painterResource: Painter,

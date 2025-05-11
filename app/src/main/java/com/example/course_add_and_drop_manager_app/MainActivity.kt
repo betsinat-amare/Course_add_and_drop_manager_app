@@ -1,5 +1,6 @@
 package com.example.course_add_and_drop_manager_app
 
+import AdminDashboard
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.course_add_and_drop_manager_app.presentation.addCourse.AddCourse
+
 
 import com.example.course_add_and_drop_manager_app.presentation.dashboard.SelectAcademicYear
 import com.example.course_add_and_drop_manager_app.presentation.dashboard.UserDashboardScreen
@@ -62,6 +64,9 @@ class MainActivity : ComponentActivity() {
                     }
                     is Screen.EditProfile ->{
                         EditProfile()
+                    }
+                    is Screen.AdminDashboard ->{
+                        AdminDashboard()
                     }
                 }
 

@@ -14,6 +14,7 @@ sealed class Screen(){
     object AddCourse:Screen()
     object DropCourse:Screen()
     object EditProfile:Screen()
+    object AdminDashboard:Screen()
 
 }
 object Course_add_and_drop_managerAppRoute {

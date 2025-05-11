@@ -1,9 +1,10 @@
 package com.example.course_add_and_drop_manager_app.data.model
 
 data class Course(
-    val id: Int,
+    val id: Int? = null,
     val title: String,
     val code: String,
-    val description: String?,
-    val creditHours: Int
+    val description: String,
+    val credit_hours: String
 )
+
