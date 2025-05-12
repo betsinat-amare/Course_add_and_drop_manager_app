@@ -4,24 +4,31 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.course_add_and_drop_manager_app.data.local.DataStoreManager
+import com.example.course_add_and_drop_manager_app.data.model.Course
+import com.example.course_add_and_drop_manager_app.data.repository.CourseRepository
+import com.example.course_add_and_drop_manager_app.presentation.dashboard.CourseViewModel
 import com.example.course_add_and_drop_manager_app.ui.theme.colorPrimary
 import com.example.course_add_and_drop_manager_app.ui.theme.white
-
 @Composable
 fun AddCard(
-    onClick: @Composable () -> Unit,
+    onAddClick: () -> Unit,
     header: String,
     text1: String,
     text2: String,
@@ -46,47 +53,29 @@ fun AddCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = header,
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                color = Color.Black,
-                            )
-                        )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(text = header, fontSize = 18.sp, color = Color.Black)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = text1,
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                color = Color.Gray
-                            )
-                        )
+                        Text(text = text1, fontSize = 14.sp, color = Color.Gray)
                         Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = text2,
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                color = Color.Gray
-                            )
-                        )
+                        Text(text = text2, fontSize = 14.sp, color = Color.Gray)
                     }
+
                     Spacer(modifier = Modifier.width(12.dp))
-                    ButtonAddAndDrop(
-                        value = "Add now",
-                        onClick = {  }
-                    )
+
+                    // Call the parent-defined handler
+                    ButtonAddAndDrop(value = "Add now", onClick = onAddClick)
                 }
 
-                // 🔥 Insert the actions (Update & Delete buttons) here
                 Spacer(modifier = Modifier.height(8.dp))
                 actions()
             }
         }
     }
 }
+
+
+
 @Composable
 fun DropCard(
     onClick: @Composable () -> Unit,

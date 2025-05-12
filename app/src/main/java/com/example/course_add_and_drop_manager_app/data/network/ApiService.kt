@@ -1,8 +1,9 @@
 package com.example.course_add_and_drop_manager_app.data.network
 
-import com.example.course_add_and_drop_manager_app.data.model.AddDropRequest
+import com.example.course_add_and_drop_manager_app.data.model.AddCourseRequest
 import com.example.course_add_and_drop_manager_app.data.model.AddDropResponse
 import com.example.course_add_and_drop_manager_app.data.model.Course
+import com.example.course_add_and_drop_manager_app.data.model.CourseResponse
 import com.example.course_add_and_drop_manager_app.data.model.CourseUpdateRequest
 import com.example.course_add_and_drop_manager_app.data.model.LoginRequest
 import com.example.course_add_and_drop_manager_app.data.model.LoginResponse
@@ -55,9 +56,11 @@ interface ApiService {
     suspend fun getCourses(
         @Header("Authorization") token: String
     ): List<Course>
-
-    @POST("adds")
-    suspend fun addCourse(@Body request: AddDropRequest): Response<AddDropResponse>
+    @POST("adds") // make sure this matches your backend route
+    suspend fun addCourse(
+        @Header("Authorization") token: String,
+        @Body request: AddCourseRequest
+    ): CourseResponse
 
     }
 

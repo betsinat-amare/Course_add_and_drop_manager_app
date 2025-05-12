@@ -1,9 +1,12 @@
 package com.example.course_add_and_drop_manager_app.data.model
 
-data class AddRequest(
-    val id: Int,
+data class AddCourseRequest(
+    val course_id: String,
+
+    )
+data class CourseResponse(
+    val id: AddDropResponse?,
     val studentId: Int,
-    val courseId: Int,
-    val approvalStatus: String,
-    val addedAt: String
+    val courseId: String,
+    val approvalStatus: String
 )

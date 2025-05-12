@@ -4,14 +4,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.course_add_and_drop_manager_app.data.local.DataStoreManager
-import com.example.course_add_and_drop_manager_app.data.model.AddDropRequest
+import com.example.course_add_and_drop_manager_app.data.model.AddCourseRequest
 import com.example.course_add_and_drop_manager_app.data.model.Course
+import com.example.course_add_and_drop_manager_app.data.model.CourseResponse
 import com.example.course_add_and_drop_manager_app.data.model.CourseUpdateRequest
 import com.example.course_add_and_drop_manager_app.data.network.RetrofitInstance.api
 import com.example.course_add_and_drop_manager_app.data.repository.CourseRepository
@@ -26,10 +28,36 @@ class CourseViewModel(
         private set
 
     var errorMessage by mutableStateOf<String?>(null)
+    val title = mutableStateOf("")
+    val code = mutableStateOf("")
+    val description = mutableStateOf("")
+    val creditHours = mutableStateOf("")
+
+
+
+    fun createCourse(token: String) {
+        viewModelScope.launch {
+            try {
+                val request = Course(
+                    title = title.value,
+                    code = code.value,
+                    description = description.value,
+                    credit_hours = (creditHours.value.toIntOrNull() ?: 0).toString()
+                )
+                CourseRepository.createCourse(request, token)
+                successMessage = "Course created successfully!"
+                errorMessage = ""
+            } catch (e: Exception) {
+                errorMessage = "Failed to create course: ${e.message}"
+                successMessage = ""
+            }
+        }
+    }
 
     init {
         fetchCourses()
     }
+
     fun fetchCourses() {
         viewModelScope.launch {
             try {
@@ -78,18 +106,23 @@ class CourseViewModel(
                     return@launch
                 }
 
-                val response = CourseRepository.addCourse(courseId)
+                val request = AddCourseRequest(course_id = courseId)
+                val response = repository.addCourse(token, request)
 
-                if (response.isSuccessful) {
-                    snackbarMessage = "Course request sent for approval."
+                if (response != null) {
+                    snackbarMessage = "Course request for ${response.courseId} sent for approval. Status: ${response.approvalStatus}"
+                    // Optional: Refresh data or add to UI
                 } else {
-                    snackbarMessage = "Failed to add course: ${response.message()}"
+                    snackbarMessage = "Failed to send course request"
                 }
+
             } catch (e: Exception) {
-                snackbarMessage = "Something went wrong: ${e.localizedMessage}"
+                snackbarMessage = "Error: ${e.localizedMessage}"
             }
         }
     }
+
+
 
 
 
@@ -99,7 +132,12 @@ class CourseViewModel(
 fun SnackbarObserver(viewModel: CourseViewModel) {
     val message = viewModel.snackbarMessage
     if (message != null) {
-        // Display the snackbar
+        LaunchedEffect(message) {
+            // You can auto-dismiss the snackbar after 3 seconds (optional)
+            kotlinx.coroutines.delay(3000)
+            viewModel.snackbarMessage = null
+        }
+
         Snackbar(
             action = {
                 Button(onClick = { viewModel.snackbarMessage = null }) {

@@ -237,6 +237,3 @@ fun AdminDashboard(viewModel: CourseViewModel = viewModel()) {
         }
     }
 }
-
-
-
