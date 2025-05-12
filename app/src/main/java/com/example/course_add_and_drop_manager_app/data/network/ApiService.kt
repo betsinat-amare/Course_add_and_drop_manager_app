@@ -8,6 +8,7 @@ import com.example.course_add_and_drop_manager_app.data.model.CourseResponse
 import com.example.course_add_and_drop_manager_app.data.model.CourseUpdateRequest
 import com.example.course_add_and_drop_manager_app.data.model.LoginRequest
 import com.example.course_add_and_drop_manager_app.data.model.LoginResponse
+import com.example.course_add_and_drop_manager_app.data.model.ProfileResponse
 import com.example.course_add_and_drop_manager_app.data.model.SignUpRequest
 import com.example.course_add_and_drop_manager_app.data.model.SignUpResponse
 import retrofit2.Response
@@ -62,7 +63,10 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: AddCourseRequest
     ): CourseResponse
-
+    @GET("profile") // Make sure the endpoint matches your backend
+    suspend fun getProfile(
+        @Header("Authorization") token: String
+    ): ProfileResponse
     @GET("adds")
     suspend fun getAllAdds(
         @Header("Authorization") token: String

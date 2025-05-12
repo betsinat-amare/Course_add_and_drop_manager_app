@@ -101,7 +101,7 @@ dependencies {
     // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.48")
 //    kapt("com.google.dagger:hilt-compiler:2.48")
-
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     // Lifecycle + Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
