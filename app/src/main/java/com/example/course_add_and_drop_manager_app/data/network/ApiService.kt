@@ -1,11 +1,13 @@
 package com.example.course_add_and_drop_manager_app.data.network
 
+import com.example.course_add_and_drop_manager_app.data.model.AddDropRequest
+import com.example.course_add_and_drop_manager_app.data.model.AddDropResponse
 import com.example.course_add_and_drop_manager_app.data.model.Course
+import com.example.course_add_and_drop_manager_app.data.model.CourseUpdateRequest
 import com.example.course_add_and_drop_manager_app.data.model.LoginRequest
 import com.example.course_add_and_drop_manager_app.data.model.LoginResponse
 import com.example.course_add_and_drop_manager_app.data.model.SignUpRequest
 import com.example.course_add_and_drop_manager_app.data.model.SignUpResponse
-import com.example.course_add_and_drop_manager_app.data.model.User
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -36,13 +38,32 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body course: Course
     ): Response<Course>
+    @PUT("courses/{id}")
+    suspend fun updateCourse(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+        @Body course: CourseUpdateRequest
+    ): Course
+    @DELETE("courses/{id}")
+    suspend fun deleteCourse(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<Unit>
 
-    @PUT("/courses/{id}")
-    suspend fun updateCourse(@Path("id") id: Int, @Body course: Course): Response<Unit>
 
-    @DELETE("/courses/{id}")
-    suspend fun deleteCourse(@Path("id") id: Int): Response<Unit>
+    @GET("courses")
+    suspend fun getCourses(
+        @Header("Authorization") token: String
+    ): List<Course>
+
+    @POST("adds")
+    suspend fun addCourse(@Body request: AddDropRequest): Response<AddDropResponse>
+
+    }
 
 
-}
+
+
+
+
 

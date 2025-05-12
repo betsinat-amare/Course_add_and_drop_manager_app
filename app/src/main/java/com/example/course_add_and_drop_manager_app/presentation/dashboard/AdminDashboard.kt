@@ -36,6 +36,8 @@ import com.example.course_add_and_drop_manager_app.ui.theme.colorAccent
 import com.example.course_add_and_drop_manager_app.ui.theme.colorGrayBackground
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.course_add_and_drop_manager_app.data.local.DataStoreManager
+import com.example.course_add_and_drop_manager_app.presentation.components.Footer
+import com.example.course_add_and_drop_manager_app.presentation.components.FooterAdmin
 
 //package com.example.course_add_and_drop_manager_app.presentation.dashboard
 //
@@ -225,6 +227,12 @@ fun AdminDashboard(viewModel: CourseViewModel = viewModel()) {
                 if (viewModel.errorMessage.value.isNotEmpty()) {
                     Text(viewModel.errorMessage.value, color = Color.Red)
                 }
+                Footer(
+                    currentScreen = Course_add_and_drop_managerAppRoute.currentScreen.value,
+                    onItemSelected = { selectedScreen ->
+                        Course_add_and_drop_managerAppRoute.navigateTo(selectedScreen)
+                    }
+                )
             }
         }
     }

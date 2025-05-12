@@ -29,9 +29,11 @@ class DataStoreManager(private val context: Context) {
         context.dataStore.edit { prefs ->
             prefs.remove(TOKEN_KEY)
         }
-        suspend fun getToken(): String? {
-            val preferences = context.dataStore.data.first()
-            return preferences[TOKEN_KEY]
-        }
+    }
+
+
+    suspend fun getToken(): String? {
+        val preferences = context.dataStore.data.first()
+        return preferences[TOKEN_KEY]
     }
 }

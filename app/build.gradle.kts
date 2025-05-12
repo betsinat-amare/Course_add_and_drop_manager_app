@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.appdistribution.gradle)
+    implementation(libs.androidx.navigation.compose.jvmstubs)
 
     // Testing
     testImplementation(libs.junit)

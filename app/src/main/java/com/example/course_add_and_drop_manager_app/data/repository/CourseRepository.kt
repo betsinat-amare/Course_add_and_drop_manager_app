@@ -27,13 +27,26 @@
 
 package com.example.course_add_and_drop_manager_app.data.repository
 
+import com.example.course_add_and_drop_manager_app.data.model.AddDropRequest
+import com.example.course_add_and_drop_manager_app.data.model.AddDropResponse
 import com.example.course_add_and_drop_manager_app.data.model.Course
+import com.example.course_add_and_drop_manager_app.data.model.CourseUpdateRequest
 
 import com.example.course_add_and_drop_manager_app.data.network.RetrofitInstance
+import com.example.course_add_and_drop_manager_app.data.network.RetrofitInstance.api
+import retrofit2.Response
 
 object CourseRepository {
     suspend fun createCourse(course: Course, token: String) {
         RetrofitInstance.api.createCourse("Bearer $token", course)
+    }
+    suspend fun deleteCourse(token: String, id: String) = api.deleteCourse(token, id)
+    suspend fun updateCourse(token: String, id: String, request: CourseUpdateRequest) =
+        api.updateCourse(token, id, request)
+
+    suspend fun addCourse(courseId: String): Response<AddDropResponse> {
+        val request = AddDropRequest(courseId)
+        return RetrofitInstance.api.addCourse(request)
     }
 }
 

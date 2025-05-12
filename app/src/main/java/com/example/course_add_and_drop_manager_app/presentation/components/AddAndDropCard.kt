@@ -21,16 +21,17 @@ import com.example.course_add_and_drop_manager_app.ui.theme.white
 
 @Composable
 fun AddCard(
-    onClick: () -> Unit,
+    onClick: @Composable () -> Unit,
     header: String,
     text1: String,
-    text2: String
+    text2: String,
+    actions: @Composable () -> Unit,
 ) {
     Box(
         modifier = Modifier
-            .fillMaxWidth() // fill width only
-            .padding(top = 32.dp), // move it a bit down from the top
-        contentAlignment = Alignment.TopCenter // center horizontally
+            .fillMaxWidth()
+            .padding(top = 32.dp),
+        contentAlignment = Alignment.TopCenter
     ) {
         Box(
             modifier = Modifier
@@ -39,61 +40,66 @@ fun AddCard(
                 .border(1.dp, Color(0xFFFFFFFF), RoundedCornerShape(12.dp))
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f)
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = header,
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            color = Color.Black,
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = header,
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                            )
                         )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = text1,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            color = Color.Gray
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = text1,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
                         )
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = text2,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            color = Color.Gray
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = text2,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
                         )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    ButtonAddAndDrop(
+                        value = "Add now",
+                        onClick = {  }
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                ButtonAddAndDrop(
-                    value = "Add now",
-                    onClick = onClick
-                )
+
+                // 🔥 Insert the actions (Update & Delete buttons) here
+                Spacer(modifier = Modifier.height(8.dp))
+                actions()
             }
         }
     }
 }
-
-
 @Composable
 fun DropCard(
-    onClick: () -> Unit,
+    onClick: @Composable () -> Unit,
     header: String,
     text1: String,
-    text2: String
+    text2: String,
+    actions: @Composable () -> Unit,
 ) {
     Box(
         modifier = Modifier
-            .fillMaxWidth() // fill width only
-            .padding(top = 32.dp), // move it a bit down from the top
-        contentAlignment = Alignment.TopCenter // center horizontally
+            .fillMaxWidth()
+            .padding(top = 32.dp),
+        contentAlignment = Alignment.TopCenter
     ) {
         Box(
             modifier = Modifier
@@ -102,47 +108,54 @@ fun DropCard(
                 .border(1.dp, Color(0xFFFFFFFF), RoundedCornerShape(12.dp))
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f)
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = header,
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            color = Color.Black,
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = header,
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                            )
                         )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = text1,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            color = Color.Gray
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = text1,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
                         )
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = text2,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            color = Color.Gray
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = text2,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
                         )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    ButtonAddAndDrop(
+                        value = "Drop now",
+                        onClick = {  }
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                ButtonAddAndDrop(
-                    value = "Drop now",
-                    onClick = onClick
-                )
+
+                // 🔥 Insert the actions (Update & Delete buttons) here
+                Spacer(modifier = Modifier.height(8.dp))
+                actions()
             }
         }
     }
 }
+
 
 
 @Composable
@@ -180,10 +193,10 @@ fun ButtonAddAndDrop(
 @Preview(showBackground = true)
 @Composable
 fun AddAndDropCardPreview() {
-    AddCard(
-        onClick = {},
-        header = "Python Starter",
-        text1 = "Learn Python basics",
-        text2 = "Duration: 6 weeks"
-    )
+//    AddCard(
+//        onClick = {},
+//        header = "Python Starter",
+//        text1 = "Learn Python basics",
+//        text2 = "Duration: 6 weeks"
+//    )
 }

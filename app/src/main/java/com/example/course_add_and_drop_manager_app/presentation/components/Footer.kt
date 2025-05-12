@@ -64,6 +64,44 @@ fun Footer(
 }
 
 @Composable
+fun FooterAdmin(
+    currentScreen: Screen,
+    onItemSelected: (Screen) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 25.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        FooterItem(
+            iconRes = R.drawable.home,
+            label = "Home",
+            isSelected = currentScreen == Screen.HomeScreen,
+            onClick = { onItemSelected(Screen.HomeScreen) }
+        )
+        FooterItem(
+            iconRes = R.drawable.add,
+            label = "Add Course",
+            isSelected = currentScreen == Screen.AddCourse,
+            onClick = { onItemSelected(Screen.AddCourse) }
+        )
+        FooterItem(
+            iconRes = R.drawable.remove,
+            label = "Drop Course",
+            isSelected = currentScreen == Screen.DropCourse,
+            onClick = { onItemSelected(Screen.DropCourse) }
+        )
+        FooterItem(
+            iconRes = R.drawable.dashboard,
+            label = "Dashboard",
+            isSelected = currentScreen == Screen.UserDashboardScreen,
+            onClick = { onItemSelected(Screen.AdminDashboard) }
+        )
+    }
+}
+@Composable
 fun FooterItem(
     iconRes: Int,
     label: String,

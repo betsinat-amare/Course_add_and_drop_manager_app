@@ -6,31 +6,60 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 import com.example.course_add_and_drop_manager_app.Course_add_and_drop_managerAppRoute
 import com.example.course_add_and_drop_manager_app.Screen
+import com.example.course_add_and_drop_manager_app.data.local.DataStoreManager
+import com.example.course_add_and_drop_manager_app.data.model.Course
+import com.example.course_add_and_drop_manager_app.data.repository.CourseRepository
 import com.example.course_add_and_drop_manager_app.presentation.components.AddCard
-import com.example.course_add_and_drop_manager_app.presentation.components.AddCard
+import com.example.course_add_and_drop_manager_app.presentation.components.DropCard
+
 import com.example.course_add_and_drop_manager_app.presentation.components.Footer
 import com.example.course_add_and_drop_manager_app.presentation.components.SearchBar
 import com.example.course_add_and_drop_manager_app.presentation.components.SystemBackButtonHandler
+import com.example.course_add_and_drop_manager_app.presentation.components.UpdateCourseDialog
+import com.example.course_add_and_drop_manager_app.presentation.dropcourse.CourseViewModel
 import com.example.course_add_and_drop_manager_app.ui.theme.colorGrayBackground
 
 @Composable
 fun AddCourse() {
+    val context = LocalContext.current
+    val dataStoreManager = remember { DataStoreManager(context) }
+
+    // You must pass repository here too (you can create it from RetrofitInstance.api)
+    val viewModel = remember {
+        CourseViewModel(
+            dataStoreManager = dataStoreManager,
+            repository = CourseRepository
+        )
+    }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    var query by remember { mutableStateOf("") }
+    var showUpdateDialog by remember { mutableStateOf(false) }
+    var selectedCourse by remember { mutableStateOf<Course?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var courseToDelete by remember { mutableStateOf<Course?>(null) }
+
+
+
     val onBack: () -> Unit = {
-        Course_add_and_drop_managerAppRoute.navigateTo(Screen.SelectAcademicYear)
+        Course_add_and_drop_managerAppRoute.navigateTo(Screen.UserDashboardScreen)
     }
 
-    SystemBackButtonHandler {
-        onBack()
-    }
+    SystemBackButtonHandler { onBack() }
 
     Surface(
         color = colorGrayBackground,
@@ -39,8 +68,8 @@ fun AddCourse() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()) // <--- Make it scrollable
-                .padding(horizontal = 16.dp) // optional: horizontal padding
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -49,10 +78,7 @@ fun AddCourse() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = { onBack() }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back"
-                    )
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                 }
                 Text(
                     text = "Add Course",
@@ -64,35 +90,102 @@ fun AddCourse() {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            var query by remember { mutableStateOf("") }
             SearchBar(
                 query = query,
                 onQueryChange = { query = it }
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            repeat(10) { // example: 10 cards
-                AddCard(
-                    onClick = {},
-                    header = "Python Starter",
-                    text1 = "Learn Python basics",
-                    text2 = "Duration: 6 weeks"
-                )
+            viewModel.errorMessage?.let {
+                Text(text = it, color = androidx.compose.ui.graphics.Color.Red)
             }
-            Column(modifier=Modifier.padding(bottom = 10.dp),
-                verticalArrangement = Arrangement.Bottom) {
-                val currentScreen = Course_add_and_drop_managerAppRoute.currentScreen.value
-                Footer(
-                    currentScreen = currentScreen,
-                    onItemSelected = { selectedScreen ->
-                        Course_add_and_drop_managerAppRoute.navigateTo(selectedScreen)
+
+            viewModel.courses
+                .filter { it.title.contains(query, ignoreCase = true) }
+                .forEach { course ->
+                    AddCard(
+                        onClick = {
+                            viewModel.addCourse(course.id.toString())
+                            LaunchedEffect(Unit) {
+                                snackbarHostState.showSnackbar("Course added successfully")
+                            }
+                        }
+                                  ,
+
+                        header = course.title,
+                        text1 = course.description,
+                        text2 = "Credit Hours: ${course.credit_hours}",
+                        actions = {
+                            Row {
+                                IconButton(onClick = {
+                                    courseToDelete = course
+                                    showDeleteDialog = true
+                                }) {
+                                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
+                                }
+                                IconButton(onClick = {
+                                    selectedCourse = course
+                                    showUpdateDialog = true
+                                }) {
+                                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Update", tint = Color(0xFF3F51B5))
+                                }
+                            }
+                        }
+
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+
+            if (showUpdateDialog && selectedCourse != null) {
+                UpdateCourseDialog(
+                    course = selectedCourse!!,
+                    onDismiss = { showUpdateDialog = false },
+                    onSubmit = { updatedRequest ->
+                        viewModel.updateCourse(selectedCourse!!.id.toString(), updatedRequest)
+                        showUpdateDialog = false
                     }
                 )
-
-
-
             }
+            if (showDeleteDialog && courseToDelete != null) {
+                AlertDialog(
+                    onDismissRequest = { showDeleteDialog = false },
+                    title = {
+                        Text("Delete Course")
+                    },
+                    text = {
+                        Text("Are you sure you want to delete ${courseToDelete?.title}?")
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.deleteCourse(courseToDelete!!.id.toString())
+                            showDeleteDialog = false
+                        }) {
+                            Text("Delete", color = Color.Red)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDeleteDialog = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
+
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+
+
+        }
+        Column(modifier=Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Bottom) {
+            Footer(
+                currentScreen = Course_add_and_drop_managerAppRoute.currentScreen.value,
+                onItemSelected = { selectedScreen ->
+                    Course_add_and_drop_managerAppRoute.navigateTo(selectedScreen)
+                }
+            )
         }
     }
 }

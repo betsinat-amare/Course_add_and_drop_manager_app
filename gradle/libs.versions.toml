@@ -12,6 +12,7 @@ benchmarkMacro = "1.3.4"
 firebaseCrashlyticsBuildtools = "3.0.3"
 runtimeLivedata = "1.8.0"
 firebaseAppdistributionGradle = "5.1.1"
+navigationComposeJvmstubs = "2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +33,7 @@ androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-mac
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 firebase-appdistribution-gradle = { group = "com.google.firebase", name = "firebase-appdistribution-gradle", version.ref = "firebaseAppdistributionGradle" }
+androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
 
 [plugins]
 apply_plugins={ id='com.google.dagger.hilt.android' }
