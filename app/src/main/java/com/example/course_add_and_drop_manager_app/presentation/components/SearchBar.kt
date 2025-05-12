@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.course_add_and_drop_manager_app.ui.theme.colorPrimary
-import com.example.course_add_and_drop_manager_app.ui.theme.colorTextField
 import com.example.course_add_and_drop_manager_app.ui.theme.white
 
 @Composable
