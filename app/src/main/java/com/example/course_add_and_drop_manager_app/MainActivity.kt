@@ -1,24 +1,20 @@
 package com.example.course_add_and_drop_manager_app
 
 import AdminDashboard
+import AllAddsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.course_add_and_drop_manager_app.presentation.addCourse.AddCourse
+import androidx.lifecycle.viewmodel.compose.viewModel
 
+import com.example.course_add_and_drop_manager_app.presentation.addCourse.AddCourse
 
 import com.example.course_add_and_drop_manager_app.presentation.dashboard.SelectAcademicYear
 import com.example.course_add_and_drop_manager_app.presentation.dashboard.UserDashboardScreen
 import com.example.course_add_and_drop_manager_app.presentation.dashboard.EditProfile
+import com.example.course_add_and_drop_manager_app.presentation.dropcourse.CourseViewModel
 import com.example.course_add_and_drop_manager_app.presentation.dropcourse.DropCourse
 import com.example.course_add_and_drop_manager_app.presentation.home.HomeScreen
 import com.example.course_add_and_drop_manager_app.presentation.signUp.SignUpScreen
@@ -68,6 +64,12 @@ class MainActivity : ComponentActivity() {
                     is Screen.AdminDashboard ->{
                         AdminDashboard()
                     }
+                    is Screen.AllAddsScreen -> {
+                        AllAddsScreen()
+                    }
+
+
+
                 }
 
             }

@@ -41,7 +41,6 @@ android {
     }
 
     composeOptions {
-
         kotlinCompilerExtensionVersion = "1.5.11"
     }
 
@@ -69,17 +68,18 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    // If you need icons:
     implementation("androidx.compose.material:material-icons-extended")
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
+    // Navigation (Fixed)
+    implementation("androidx.navigation:navigation-compose:2.9.0")
+
     // Firebase (if used)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.appdistribution.gradle)
-    implementation(libs.androidx.navigation.compose.jvmstubs)
 
     // Testing
     testImplementation(libs.junit)
@@ -97,16 +97,18 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
+    // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.48")
-    // kapt("com.google.dagger:hilt-compiler:2.48") // Enable if using Hilt
+//    kapt("com.google.dagger:hilt-compiler:2.48")
 
     // Lifecycle + Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
 
-    // Auth
+    // Auth and DataStore
     implementation("com.auth0.android:jwtdecode:2.0.1")
-    implementation ("androidx.datastore:datastore-preferences:1.0.0")
-
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 }

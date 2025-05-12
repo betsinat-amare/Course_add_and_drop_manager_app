@@ -2,6 +2,7 @@ package com.example.course_add_and_drop_manager_app.data.network
 
 import com.example.course_add_and_drop_manager_app.data.model.AddCourseRequest
 import com.example.course_add_and_drop_manager_app.data.model.AddDropResponse
+import com.example.course_add_and_drop_manager_app.data.model.AddResponse
 import com.example.course_add_and_drop_manager_app.data.model.Course
 import com.example.course_add_and_drop_manager_app.data.model.CourseResponse
 import com.example.course_add_and_drop_manager_app.data.model.CourseUpdateRequest
@@ -21,7 +22,7 @@ import retrofit2.http.Path
 interface ApiService {
 
     // User sign-up endpoint
-    @POST("auth/signup")  // Adjust path based on your backend
+    @POST("auth/signup")
     suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<SignUpResponse>
 
     @POST("auth/login")
@@ -61,6 +62,11 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: AddCourseRequest
     ): CourseResponse
+
+    @GET("adds")
+    suspend fun getAllAdds(
+        @Header("Authorization") token: String
+    ): List<AddResponse>
 
     }
 

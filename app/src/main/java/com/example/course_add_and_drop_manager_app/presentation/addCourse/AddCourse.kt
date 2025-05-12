@@ -65,87 +65,102 @@ fun AddCourse() {
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = colorGrayBackground
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
         ) {
-            Spacer(modifier = Modifier.height(15.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { onBack() }) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-                }
-                Text(
-                    text = "Add Course",
-                    modifier = Modifier.padding(top = 17.dp),
-                    style = TextStyle(fontSize = 18.sp)
-                )
-                ProfileImgPlaceholder()
-            }
+                Column {
+                    Spacer(modifier = Modifier.height(15.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
-
-            SearchBar(
-                query = query,
-                onQueryChange = { query = it }
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            viewModel.errorMessage?.let {
-                Text(text = it, color = Color.Red)
-            }
-
-
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            viewModel.courses
-                .filter { it.title.contains(query, ignoreCase = true) }
-                .forEach { course ->
-                    AddCard(
-                        onAddClick = {
-                            courseToAdd = course
-                            showAddDialog = true
-                        },
-                        header = course.title,
-                        text1 = course.description,
-                        text2 = "Credit Hours: ${course.credit_hours}",
-                        actions = {
-                            Row {
-                                IconButton(onClick = {
-                                    courseToDelete = course
-                                    showDeleteDialog = true
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Delete",
-                                        tint = Color.Red
-                                    )
-                                }
-                                IconButton(onClick = {
-                                    selectedCourse = course
-                                    showUpdateDialog = true
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "Update",
-                                        tint = Color(0xFF3F51B5)
-                                    )
-                                }
-                            }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        IconButton(onClick = { onBack() }) {
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                         }
+                        Text(
+                            text = "Add Course",
+                            modifier = Modifier.padding(top = 17.dp),
+                            style = TextStyle(fontSize = 18.sp)
+                        )
+                        ProfileImgPlaceholder()
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    SearchBar(
+                        query = query,
+                        onQueryChange = { query = it }
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    viewModel.errorMessage?.let {
+                        Text(text = it, color = Color.Red)
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    viewModel.courses
+                        .filter { it.title.contains(query, ignoreCase = true) }
+                        .forEach { course ->
+                            AddCard(
+                                onAddClick = {
+                                    courseToAdd = course
+                                    showAddDialog = true
+                                },
+                                header = course.title,
+                                text1 = course.description,
+                                text2 = "Credit Hours: ${course.credit_hours}",
+                                actions = {
+                                    Row {
+                                        IconButton(onClick = {
+                                            courseToDelete = course
+                                            showDeleteDialog = true
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = "Delete",
+                                                tint = Color.Red
+                                            )
+                                        }
+                                        IconButton(onClick = {
+                                            selectedCourse = course
+                                            showUpdateDialog = true
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Default.Edit,
+                                                contentDescription = "Update",
+                                                tint = Color(0xFF3F51B5)
+                                            )
+                                        }
+                                    }
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
 
-            // Add Course Dialog
+                Footer(
+                    currentScreen = Course_add_and_drop_managerAppRoute.currentScreen.value,
+                    onItemSelected = { selectedScreen ->
+                        Course_add_and_drop_managerAppRoute.navigateTo(selectedScreen)
+                    },
+                )
+            }
+
+            // Dialogs stay outside the scrollable column
             if (showAddDialog && courseToAdd != null) {
                 AlertDialog(
                     onDismissRequest = { showAddDialog = false },
@@ -170,7 +185,6 @@ fun AddCourse() {
                 )
             }
 
-            // Update Dialog
             if (showUpdateDialog && selectedCourse != null) {
                 UpdateCourseDialog(
                     course = selectedCourse!!,
@@ -182,7 +196,6 @@ fun AddCourse() {
                 )
             }
 
-            // Delete Dialog
             if (showDeleteDialog && courseToDelete != null) {
                 AlertDialog(
                     onDismissRequest = { showDeleteDialog = false },
@@ -203,22 +216,9 @@ fun AddCourse() {
                     }
                 )
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
-        }
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Footer(
-                currentScreen = Course_add_and_drop_managerAppRoute.currentScreen.value,
-                onItemSelected = { selectedScreen ->
-                    Course_add_and_drop_managerAppRoute.navigateTo(selectedScreen)
-                },
-            )
         }
     }
+
 }
 
 @Preview

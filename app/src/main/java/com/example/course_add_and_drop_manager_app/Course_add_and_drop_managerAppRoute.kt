@@ -15,7 +15,7 @@ sealed class Screen(){
     object DropCourse:Screen()
     object EditProfile:Screen()
     object AdminDashboard:Screen()
-
+    object AllAddsScreen:Screen()
 }
 object Course_add_and_drop_managerAppRoute {
     val currentScreen: MutableState<Screen> = mutableStateOf(Screen.HomeScreen)

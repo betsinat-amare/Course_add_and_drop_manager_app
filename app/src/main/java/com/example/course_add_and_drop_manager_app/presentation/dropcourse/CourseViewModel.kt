@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.course_add_and_drop_manager_app.data.local.DataStoreManager
 import com.example.course_add_and_drop_manager_app.data.model.AddCourseRequest
+import com.example.course_add_and_drop_manager_app.data.model.AddResponse
 import com.example.course_add_and_drop_manager_app.data.model.Course
 import com.example.course_add_and_drop_manager_app.data.model.CourseResponse
 import com.example.course_add_and_drop_manager_app.data.model.CourseUpdateRequest
@@ -121,6 +122,25 @@ class CourseViewModel(
             }
         }
     }
+    val allAdds = mutableStateOf<List<AddResponse>>(emptyList())
+//    val errorMessage = mutableStateOf("")
+
+    fun fetchAllAdds() {
+        viewModelScope.launch {
+            try {
+                val token = dataStoreManager.getToken()
+                if (token != null) {
+                    val response = repository.getAllAdds(token)
+                    allAdds.value = response
+                } else {
+                    errorMessage = "Unauthorized: No token"
+                }
+            } catch (e: Exception) {
+                errorMessage= e.message ?: "Unknown error"
+            }
+        }
+    }
+
 
 
 
